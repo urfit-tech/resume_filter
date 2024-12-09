@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        resume_filter
 // @namespace   vip104
-// @version     0.0.3
+// @version     0.0.4
 // @description filter resume by blacklist
 // @author      kk
 // @match       https://vip.104.com.tw/*
@@ -17,7 +17,6 @@
   showLoadingOverlay();
 
   setTimeout(() => {
-    hideLoadingOverlay();
     const userName =
       document.querySelector('[data-qa-id="UserName"]').innerHTML ||
       "未知使用者";
@@ -30,6 +29,7 @@
     })
       .then((response) => response.json())
       .then((result) => {
+        hideLoadingOverlay();
         const codeList = result.records.map((record) => record.fields.Code);
         document.querySelectorAll(".resume-card").forEach((resumeCard) => {
           // 抓取姓名
@@ -70,10 +70,10 @@
               // 創建新的按鈕
               const newButton = document.createElement("button");
               newButton.className =
-                "btn btn-danger btn--md btn--wide btn--wide--icon btn--icon";
-              newButton.style = "letter-spacing: 32px; text-indent: 32px;";
+                "btn btn-text btn--md btn--wide btn--wide--icon btn--icon";
+              newButton.style = "letter-spacing: 32px;text-indent: 32px;";
               newButton.innerHTML = `
-              <i style="font-size:16px;" class="vip-icon-mail"></i>
+              <i style="font-size:16px;" class="vip-icon-delete"></i>
               <span style="margin-left: -32px; margin-right: -32px;">封鎖</span>
             `;
 
@@ -91,6 +91,7 @@
                   ],
                 };
 
+                showLoadingOverlay();
                 fetch(url, {
                   method: "POST",
                   headers: {
@@ -107,6 +108,9 @@
                   .catch((error) => {
                     console.error("Error:", error);
                     alert("封鎖失敗: " + error);
+                  })
+                  .finally(() => {
+                    hideLoadingOverlay();
                   });
               });
 
