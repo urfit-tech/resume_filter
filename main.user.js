@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        resume_filter
 // @namespace   vip104
-// @version     0.0.2
+// @version     0.0.3
 // @description filter resume by blacklist
 // @author      kk
 // @match       https://vip.104.com.tw/*
@@ -10,11 +10,14 @@
 
 (function () {
   "use strict";
-  const RECENT_DAYS = 90; // 最近幾天內的甄試歷程不會被顯示
   const url = "https://api.airtable.com/v0/appY6JshgsUQDvyJF/blacklist";
+  const RECENT_DAYS = Number(GM_getValue("RECENT_DAYS")) || 90; // 最近幾天內的甄試歷程不會被顯示
   const apiKey = GM_getValue("API_KEY"); // 替換為你的 API 密鑰
 
+  showLoadingOverlay();
+
   setTimeout(() => {
+    hideLoadingOverlay();
     const userName =
       document.querySelector('[data-qa-id="UserName"]').innerHTML ||
       "未知使用者";
@@ -68,10 +71,9 @@
               const newButton = document.createElement("button");
               newButton.className =
                 "btn btn-danger btn--md btn--wide btn--wide--icon btn--icon";
-              newButton.style =
-                "letter-spacing: 32px; text-indent: 32px; padding: 6px !important";
+              newButton.style = "letter-spacing: 32px; text-indent: 32px;";
               newButton.innerHTML = `
-              <i style="font-size:16px;" class="vip-icon-custom"></i>
+              <i style="font-size:16px;" class="vip-icon-mail"></i>
               <span style="margin-left: -32px; margin-right: -32px;">封鎖</span>
             `;
 
@@ -120,3 +122,62 @@
       });
   }, 3000);
 })();
+
+// 創建 overlay 和 loading 元素
+function createLoadingOverlay() {
+  // 創建 overlay 容器
+  const overlay = document.createElement("div");
+  overlay.id = "loading-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // 半透明背景
+  overlay.style.zIndex = "9999"; // 保證覆蓋最上層
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.fontSize = "1.5rem";
+  overlay.style.color = "#fff";
+  overlay.style.fontFamily = "Arial, sans-serif";
+
+  // 創建 loading 文本
+  const loadingText = document.createElement("div");
+  loadingText.textContent = "Loading...";
+  loadingText.style.animation = "fade 1s infinite"; // 添加簡單動畫
+
+  // 可選：添加動畫樣式
+  const style = document.createElement("style");
+  style.textContent = `
+      @keyframes fade {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+      }
+  `;
+  document.head.appendChild(style);
+
+  // 將文本添加到 overlay
+  overlay.appendChild(loadingText);
+
+  // 添加到頁面
+  document.body.appendChild(overlay);
+}
+
+// 顯示 overlay
+function showLoadingOverlay() {
+  const overlay = document.getElementById("loading-overlay");
+  if (!overlay) {
+    createLoadingOverlay();
+  } else {
+    overlay.style.display = "flex"; // 顯示 overlay
+  }
+}
+
+// 隱藏 overlay
+function hideLoadingOverlay() {
+  const overlay = document.getElementById("loading-overlay");
+  if (overlay) {
+    overlay.style.display = "none"; // 隱藏 overlay
+  }
+}
