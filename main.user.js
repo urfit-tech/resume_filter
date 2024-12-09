@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        resume_filter
 // @namespace   vip104
-// @version     0.0.4
+// @version     0.0.5
 // @description filter resume by blacklist
 // @author      kk
 // @match       https://vip.104.com.tw/*
