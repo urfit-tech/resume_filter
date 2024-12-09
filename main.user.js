@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        resume_filter
 // @namespace   vip104
-// @version     0.0.5
+// @version     0.0.6
 // @description filter resume by blacklist
 // @author      kk
 // @match       https://vip.104.com.tw/*
@@ -67,17 +67,19 @@
           resumeCard
             .querySelectorAll(".combo-btns")
             .forEach((buttonContainer) => {
-              // 創建新的按鈕
-              const newButton = document.createElement("button");
-              newButton.className =
-                "btn btn-text btn--md btn--wide btn--wide--icon btn--icon";
-              newButton.style = "letter-spacing: 32px;text-indent: 32px;";
-              newButton.innerHTML = `
-              <i style="font-size:16px;" class="vip-icon-delete"></i>
-              <span style="margin-left: -32px; margin-right: -32px;">封鎖</span>
-            `;
+              // 找到「儲存」按鈕
+              const saveButton = buttonContainer.querySelector(
+                "button:nth-child(2)"
+              );
 
-              newButton.addEventListener("click", () => {
+              // 創建新的按鈕
+              const blockButton = saveButton.cloneNode(true);
+              blockButton.className =
+                "btn btn-danger btn--md btn--wide btn--wide--icon btn--icon";
+              blockButton.querySelector("i").className = "vip-icon-delete";
+              blockButton.querySelector("span").textContent = "封鎖";
+
+              blockButton.addEventListener("click", () => {
                 const data = {
                   records: [
                     {
@@ -114,13 +116,8 @@
                   });
               });
 
-              // 找到「儲存」按鈕
-              const saveButton = buttonContainer.querySelector(
-                "button:nth-child(2)"
-              );
-
               // 在「儲存」按鈕之後插入新按鈕
-              buttonContainer.insertBefore(newButton, saveButton);
+              buttonContainer.insertBefore(blockButton, saveButton);
             });
         });
       });
