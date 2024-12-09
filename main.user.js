@@ -4,7 +4,7 @@
 // @version     0.0.1
 // @description filter resume by blacklist
 // @author      kk
-// @match       https://vip.104.com.tw/
+// @match       https://vip.104.com.tw/*
 // @grant       GM_getValue
 // ==/UserScript==
 
